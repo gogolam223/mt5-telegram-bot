@@ -50,6 +50,12 @@ class TelegramBot:
                 return
             print(f"Listening to channal [{dialog.title}] for signal [{signal['ticker']}]")
             chats.append(int(signal['telegram_source_chat_id']))
+        for idx, trader_config in enumerate(self.config['traders']):
+            await self.send_noti(
+                int(trader_config['noti_chat_id']),
+                f'MT5 bot started:\nTicker: {trader_config['ticker']}\nServer: {trader_config['mt5_server']}\nAccount: {trader_config['mt5_login']}',
+                trader_config['id']
+            )
             
         self.client.add_event_handler(
             self.handle_channel_message,
