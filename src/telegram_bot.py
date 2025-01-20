@@ -14,10 +14,10 @@ class TelegramBot:
             config['telegram']['api_hash'],
         )
         # create mt5 instance for each traders
-        traders = []
-        for trader in config['traders']:
+        traders = [None for _ in range(len(config['traders']))]
+        for idx, trader in enumerate(config['traders']):
             # self, ticker: str, login: int, password: str, server: str, path: str
-            mt5 = MetaTrader(
+            traders[idx] = MetaTrader(
                 trader['ticker'],
                 int(trader['mt5_login']),
                 trader['mt5_password'],
@@ -25,7 +25,6 @@ class TelegramBot:
                 trader['mt5_path'],
                 trader['timezone_adjust'],
             )
-            traders.append(mt5)
         self.traders = traders
     
     async def print_telegram_channals(self):
