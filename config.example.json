@@ -1,0 +1,62 @@
+{
+    "telegram": {
+        "api_id": 111,
+        "api_hash": "aaa"
+    },
+    "signals": [
+        {
+            "ticker": "XAUUSD",
+            "telegram_source_chat_id": "-12345",
+            "message_type": "XAUUSD_COMBO"
+        }
+    ],
+    "traders": [
+        {
+            "id": "trader-1",
+            "ticker": "XAUUSD",
+            "mt5_server": "Demo",
+            "mt5_login": "12345",
+            "mt5_password": "Aa1234",
+            "mt5_path": "C:/Program Files/MT5/terminal64.exe",
+            "noti_chat_id": "-54321",
+            "timezone_adjust": 2,
+            "acceptable_price_diff": 0.3,
+            "max_total_positions": {
+                "buy": 3,
+                "sell": 3
+            },
+            "daily_margin": 4000,
+            "daily_margin_cutoff_timezone": "02",
+            "order_probability": 95,
+            "orders": [
+                {
+                    "lot": 0.8,
+                    "sl": 500,
+                    "tp": 150,
+                    "noise_tp": 3,
+                    "noise_sl": 5,
+                    "deviation": 20
+                },
+                {
+                    "lot": 0.8,
+                    "sl": 700,
+                    "tp": 150,
+                    "noise_tp": 3,
+                    "noise_sl": 5,
+                    "deviation": 20
+                }
+            ],
+            "noise_order_probaility": 0,
+            "noise_order": [
+                {
+                    "lot": 0.8,
+                    "sl": 600,
+                    "tp": 150,
+                    "noise_tp": 3,
+                    "noise_sl": 5,
+                    "devation": 20
+                }
+            ]
+        }
+    ]
+}
