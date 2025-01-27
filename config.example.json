@@ -6,7 +6,16 @@
     "signals": [
         {
             "ticker": "XAUUSD",
+            "telegram_source_type": "group",
             "telegram_source_chat_id": "-12345",
+            "telegram_source_peer_id": "12345",
+            "message_type": "XAUUSD_COMBO"
+        },
+        {
+            "ticker": "XAUUSD",
+            "telegram_source_type": "channel",
+            "telegram_source_chat_id": "-100678910",
+            "telegram_source_peer_id": "678910",
             "message_type": "XAUUSD_COMBO"
         }
     ],
