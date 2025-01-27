@@ -27,11 +27,11 @@ class TelegramBot:
             )
         self.traders = traders
     
-    async def print_telegram_channals(self):
+    async def print_telegram_channels(self):
         await self.client.start()
         dialogs = await self.client.get_dialogs()
         for item in dialogs:
-            print(f"Chat ID: {item.id}, Title: {item.title}")
+            print(f"Chat ID: {item.id}, Title: {item.title}, Entity(Peer id): {item.entity.id}")
         await self.client.disconnect()
         return
 
@@ -47,7 +47,7 @@ class TelegramBot:
                 print(f"Invalid Source Chat ID for signal {signal['ticker']}")
                 await self.client.disconnect()
                 return
-            print(f"Listening to channal [{dialog.title}] for signal [{signal['ticker']}]")
+            print(f"Listening to channel [{dialog.title}] for signal [{signal['ticker']}]")
             chats.append(int(signal['telegram_source_chat_id']))
         for idx, trader_config in enumerate(self.config['traders']):
             await self.send_noti(
@@ -75,21 +75,29 @@ class TelegramBot:
     async def handle_channel_message(self, event):
         message = event.message
         # print(f"New message: {message.text}")
-        # print(f"channal id: {message.peer_id.chat_id}")
-        ticker = next(
-            (item for item in self.config['signals'] if abs(int(item["telegram_source_chat_id"])) == message.peer_id.chat_id), None
+        source_peer_id = None
+        if (hasattr(message.peer_id, 'chat_id')):
+            source_peer_id = message.peer_id.chat_id
+        elif (hasattr(message.peer_id, 'channel_id')):
+            source_peer_id = message.peer_id.channel_id
+        print("source_peer_id: " + str(source_peer_id))
+        if source_peer_id == None:
+            raise ValueError("Cannot find Source Peer Id from message")
+
+        signal = next(
+            (item for item in self.config['signals'] if abs(int(item["telegram_source_peer_id"])) == abs(int(source_peer_id))), None
         )
-        # print(f"match ticker: {ticker['ticker']}")
-        if ticker == None:
+        # print(f"match signal: {signal['ticker']}")
+        if signal == None:
             raise ValueError("Cannot find match ticker")
         
         for idx, trader_config in enumerate(self.config['traders']):
             # only execute if this trader's ticker matches with signal's
-            if trader_config['ticker'] != ticker['ticker']:
+            if trader_config['ticker'] != signal['ticker']:
                 continue
 
             # parse telegram msg
-            result = self.parser.parse(event, ticker['message_type'])
+            result = self.parser.parse(event, signal['message_type'])
             # print(result)
 
             if result['valid']:
@@ -226,7 +234,7 @@ if __name__ == "__main__":
     with open('config.json', 'r') as file:
         config = json.load(file)
     bot = TelegramBot(config)
-    # asyncio.run(bot.print_telegram_channals())
+    # asyncio.run(bot.print_telegram_channels())
     try:
         asyncio.run(bot.start())
     except KeyboardInterrupt:

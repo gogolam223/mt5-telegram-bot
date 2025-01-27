@@ -7,7 +7,7 @@ if __name__ == "__main__":
         config = json.load(file)
     bot = TelegramBot(config)
     try:
-        # asyncio.run(bot.print_telegram_channals())
+        # asyncio.run(bot.print_telegram_channels())
         asyncio.run(bot.start())
     except KeyboardInterrupt:
         print("\nBot stopped.")

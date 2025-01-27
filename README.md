@@ -1,5 +1,5 @@
 # mt5-telegram-personal-bot
-This bot will listen to telegram channales and execute on MT5
+This bot will listen to telegram channeles and execute on MT5
 
 ### install package: 
 py -m pip install -r ./requirements.txt
