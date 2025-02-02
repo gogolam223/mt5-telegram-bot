@@ -162,20 +162,20 @@ class TelegramBot:
                     )
                     continue
 
-                if result['type'] == 'normal':
-                    # 4. daily margin
-                    today = datetime.now(timezone(timedelta(hours=int(trader_config['daily_margin_cutoff_timezone'])))).isoformat()
-                    last_cutoff_timestamp = datetime.fromisoformat(f'{today[0:10]}T00:00:00+{trader_config['daily_margin_cutoff_timezone']}:00').timestamp()
-                    equity = self.traders[idx].get_current_equity()
-                    prev_equity = self.traders[idx].get_previous_equity(last_cutoff_timestamp)
-                    if prev_equity - equity > int(trader_config['daily_margin']):
-                        await self.send_noti(
-                            int(trader_config['noti_chat_id']),
-                            f'Reached daily margin:\nPrevious Equity: {prev_equity}\nCurrent Equity: {equity}\nMargin: {trader_config['daily_margin']}',
-                            trader_config['id']
-                        )
-                        continue
+                # 4. daily margin
+                today = datetime.now(timezone(timedelta(hours=int(trader_config['daily_margin_cutoff_timezone'])))).isoformat()
+                last_cutoff_timestamp = datetime.fromisoformat(f'{today[0:10]}T00:00:00+{trader_config['daily_margin_cutoff_timezone']}:00').timestamp()
+                equity = self.traders[idx].get_current_equity()
+                prev_equity = self.traders[idx].get_previous_equity(last_cutoff_timestamp)
+                if prev_equity - equity > int(trader_config['daily_margin']):
+                    await self.send_noti(
+                        int(trader_config['noti_chat_id']),
+                        f'Reached daily margin:\nPrevious Equity: {prev_equity}\nCurrent Equity: {equity}\nMargin: {trader_config['daily_margin']}',
+                        trader_config['id']
+                    )
+                    continue
 
+                if result['type'] == 'normal':
                     # 5. order probability, reverse the value to make the code cleaner
                     if random_by_probability(100 - trader_config['order_probability']):
                         await self.send_noti(
