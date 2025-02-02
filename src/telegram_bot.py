@@ -82,7 +82,7 @@ class TelegramBot:
             source_peer_id = message.peer_id.chat_id
         elif (hasattr(message.peer_id, 'channel_id')):
             source_peer_id = message.peer_id.channel_id
-        print("source_peer_id: " + str(source_peer_id))
+        # print("source_peer_id: " + str(source_peer_id))
         if source_peer_id == None:
             raise ValueError("Cannot find Source Peer Id from message")
 
