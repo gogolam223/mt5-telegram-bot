@@ -65,6 +65,8 @@ class TelegramBot:
         await self.client.run_until_disconnected()
     
     async def send_noti(self, chat_id: int, message: str, title: str | None = None,):
+        if chat_id == 0:
+            return
         if self.client.is_connected():
             formmatted_message = (f'[{title}]\n' + message) if title != None else message
             # print(formmatted_message)
