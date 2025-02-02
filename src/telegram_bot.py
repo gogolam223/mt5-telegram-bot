@@ -176,7 +176,7 @@ class TelegramBot:
                     continue
 
                 if result['type'] == 'normal':
-                    # 5. order probability, reverse the value to make the code cleaner
+                    # 5a. order probability, reverse the value to make the code cleaner
                     if random_by_probability(100 - trader_config['order_probability']):
                         await self.send_noti(
                             int(trader_config['noti_chat_id']),
@@ -185,7 +185,7 @@ class TelegramBot:
                         )
                         continue
 
-                    # 6. place order
+                    # 6a. place order
                     orders_id = []
                     for order_config in trader_config['orders']:
                         try:
@@ -207,18 +207,51 @@ class TelegramBot:
                             raise e
                     await self.send_noti(
                         int(trader_config['noti_chat_id']),
-                        f'Buy orders placed: ' + str(orders_id),
+                        f'Orders placed: ' + str(orders_id),
                         trader_config['id']
                     )
 
                 elif result['type'] == 'noise_order':
-                    # TODO: noise order
+                    # 5b. noise order probability, reverse the value to make the code cleaner
+                    if random_by_probability(100 - trader_config['noise_order_probaility']):
+                        await self.send_noti(
+                            int(trader_config['noti_chat_id']),
+                            f'Not handling this noise (noise order probability: {trader_config['noise_order_probaility']}%)',
+                            trader_config['id']
+                        )
+                        continue
+
+
+                    # 6b. place noise order
+                    orders_id = []
+                    for order_config in trader_config['noise_order']:
+                        try:
+                            order_result = self.traders[idx].place_order(
+                                float(order_config['lot']),
+                                order_type,
+                                add_noise_int(order_config['sl'], order_config['noise_sl']),
+                                add_noise_int(order_config['tp'], order_config['noise_tp']),
+                                int(order_config['deviation']),
+                                "" # TODO: comment in mt5
+                            )
+                            orders_id.append(order_result.order)
+                        except Exception as e:
+                            await self.send_noti(
+                                int(trader_config['noti_chat_id']),
+                                f'Unable to place noise order for this config, please check bot terminal\n' + str(order_config),
+                                trader_config['id']
+                            )
+                            raise e
                     await self.send_noti(
                         int(trader_config['noti_chat_id']),
-                        f'Received noise orders: ' + result['raw_msg'],
+                        f'Noise orders placed: ' + str(orders_id),
                         trader_config['id']
                     )
-                    return
+                    # await self.send_noti(
+                    #     int(trader_config['noti_chat_id']),
+                    #     f'Received noise orders: ' + result['raw_msg'],
+                    #     trader_config['id']
+                    # )
             else:
                 await self.send_noti(
                     int(trader_config['noti_chat_id']),
