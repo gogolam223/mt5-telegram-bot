@@ -5,7 +5,7 @@ from typing import TypedDict, Union, Literal
 class ValidMessage(TypedDict):
     valid: True
     type: Literal['normal', 'noise_order']
-    ticker: Literal['XAUUSD', 'NVDA'] # TODO: confirm ticker name
+    ticker: Literal['XAUUSD', 'NVIDIA CFD'] # TODO: confirm ticker name
     trend: Literal['Up', 'Down']
     current_price: int
     message_timestamp: datetime
@@ -38,7 +38,7 @@ class MessageParser:
                 trend_text = text[3].strip()
                 if trend_text not in ['Potential Uptrend Started', 'Potential Downtrend Started']:
                     raise TypeError
-                trend = 'Up' if trend_text == 'Potential Uptrend Started' else 'Down' if trend_text == 'Potential Uptrend Started' else None
+                trend = 'Up' if trend_text == 'Potential Uptrend Started' else 'Down' if trend_text == 'Potential Downtrend Started' else None
                 if trend == None:
                     raise TypeError
                 return {
@@ -123,13 +123,13 @@ class MessageParser:
                 trend_text = text[3].strip()
                 if trend_text not in ['Potential Uptrend Started', 'Potential Downtrend Started']:
                     raise TypeError
-                trend = 'Up' if trend_text == 'Potential Uptrend Started' else 'Down' if trend_text == 'Potential Uptrend Started' else None
+                trend = 'Up' if trend_text == 'Potential Uptrend Started' else 'Down' if trend_text == 'Potential Downtrend Started' else None
                 if trend == None:
                     raise TypeError
                 return {
                     'valid': True,
                     'type': 'normal',
-                    'ticker': 'NVDA', # TODO: confirm ticker name
+                    'ticker': 'NVIDIA CFD', # TODO: confirm ticker name
                     'trend': trend,
                     'current_price': price,
                     'message_timestamp': timestamp,
