@@ -195,7 +195,7 @@ class TelegramBot:
                                 add_noise_int(order_config['sl'], order_config['noise_sl']),
                                 add_noise_int(order_config['tp'], order_config['noise_tp']),
                                 int(order_config['deviation']),
-                                "" # TODO: comment in mt5
+                                f"{str(result['message_timestamp'])[-4:]}" # comment in mt5
                             )
                             orders_id.append(order_result.order)
                         except Exception as e:
@@ -232,7 +232,7 @@ class TelegramBot:
                                 add_noise_int(order_config['sl'], order_config['noise_sl']),
                                 add_noise_int(order_config['tp'], order_config['noise_tp']),
                                 int(order_config['deviation']),
-                                "" # TODO: comment in mt5
+                                f"{str(result['message_timestamp'])[-4:]}" # comment in mt5
                             )
                             orders_id.append(order_result.order)
                         except Exception as e:
