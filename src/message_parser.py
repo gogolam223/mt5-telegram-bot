@@ -5,7 +5,7 @@ from typing import TypedDict, Union, Literal
 class ValidMessage(TypedDict):
     valid: True
     type: Literal['normal', 'noise_order']
-    ticker: Literal['XAUUSD']
+    ticker: Literal['XAUUSD', 'NVDA'] # TODO: confirm ticker name
     trend: Literal['Up', 'Down']
     current_price: int
     message_timestamp: datetime
@@ -18,7 +18,7 @@ class InvalidMessage(TypedDict):
 
 FormattedMessage = Union[ValidMessage, InvalidMessage]
 
-MessageParserType = Literal['XAUUSD', 'XAUUSD_COMBO']
+MessageParserType = Literal['XAUUSD', 'XAUUSD_COMBO', 'NVDA']
 
 class MessageParser:
     def parse(self, msg: events.NewMessage, type: MessageParserType) -> FormattedMessage:
@@ -101,6 +101,40 @@ class MessageParser:
                         'message_timestamp': timestamp,
                         'raw_msg': msg.raw_text,
                     }
+            except:
+                return {
+                    'valid': False,
+                    "msg": f'Bot failed to read the telegram message: \n{msg.raw_text}',
+                    'raw_msg': msg.raw_text,
+                }
+        if type == 'NVDA':
+            try:
+                text = msg.raw_text.splitlines()
+                timestamp = msg.message.date.timestamp()
+                # fx
+                if text[0].strip() not in ['🔴NVDA🔴', '🟢NVDA🟢']:
+                    raise TypeError
+                # price
+                price_texts = text[1].strip().split(' ')
+                if len(price_texts) != 2 or price_texts[0] != '現價:':
+                    raise TypeError
+                price = float(price_texts[1]) # might throw error if it is not a float
+                # trend
+                trend_text = text[3].strip()
+                if trend_text not in ['Potential Uptrend Started', 'Potential Downtrend Started']:
+                    raise TypeError
+                trend = 'Up' if trend_text == 'Potential Uptrend Started' else 'Down' if trend_text == 'Potential Uptrend Started' else None
+                if trend == None:
+                    raise TypeError
+                return {
+                    'valid': True,
+                    'type': 'normal',
+                    'ticker': 'NVDA', # TODO: confirm ticker name
+                    'trend': trend,
+                    'current_price': price,
+                    'message_timestamp': timestamp,
+                    'raw_msg': msg.raw_text,
+                }
             except:
                 return {
                     'valid': False,
